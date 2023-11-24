@@ -30,7 +30,7 @@ export default function SignUp() {
       reset();
       navigate("/sign-in");
     } catch (err) {
-      // console.log("🚀 ~ file: SignUp.jsx:29 ~ onSubmit ~ err:", err);
+      console.log("🚀 ~ file: SignUp.jsx:29 ~ onSubmit ~ err:", err);
       setError(
         err.response.data.message
           ? err.response.data.message
