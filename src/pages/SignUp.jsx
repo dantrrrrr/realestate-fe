@@ -22,7 +22,10 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/auth/signup", data);
+      const response = await axios.post("/api/auth/signup", data, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
       toast.success(response.data.message);
       reset();
       navigate("/sign-in");
@@ -136,7 +139,7 @@ export default function SignUp() {
               <span>Sign up</span>
             )}
           </button>
-          <OAuth/>
+          <OAuth />
         </form>
         <div className="flex gap-2 mt-5 text-xs justify-end ">
           <p>Have an account ?</p>
