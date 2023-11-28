@@ -10,6 +10,7 @@ import {
   useUserSelector,
 } from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
+import axiosRequest from "../config/axiosRequest";
 
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 export default function SignIn() {
@@ -31,7 +32,7 @@ export default function SignIn() {
   const onSubmit = async (data) => {
     dispatch(signInStart());
     try {
-      const response = await axios.post("/api/auth/signin", data);
+      const response = await axiosRequest.post("/api/auth/signin", data);
       // console.log("🚀 ~ file: SignIn.jsx:32 ~ onSubmit ~ response:", response);
 
       dispatch(signInSuccess(response.data));

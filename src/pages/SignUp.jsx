@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import OAuth from "../components/OAuth";
+import axiosRequest from "../config/axiosRequest";
 const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
 const USERNAME_REGEX = /^\w{6,}$/;
@@ -22,7 +23,7 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/auth/signup", data, {
+      const response = await axiosRequest.post("/api/auth/signup", data, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
