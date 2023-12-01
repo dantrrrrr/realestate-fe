@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { useUserSelector } from "../redux/user/userSlice";
+import {
+  updateUserFail,
+  useUserSelector,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
 import { useForm } from "react-hook-form";
 
 import {
@@ -9,6 +14,9 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase/firebase";
+import { useDispatch } from "react-redux";
+import axiosRequest from "../config/axiosRequest";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const {
@@ -20,17 +28,35 @@ export default function Profile() {
   } = useForm();
 
   const { currentUser: user } = useUserSelector();
+  console.log("🚀 ~ file: Profile.jsx:31 ~ Profile ~ user:", user);
 
   const [file, setFile] = useState(undefined);
   const [filePercent, setFilePercent] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({
-    username: user.username,
-    email: user.email,
-    avatar: user.avatar,
-  });
-  const onSubmit = (data) => {
-    console.log(data);
+  const [imageUrl, setImageUrl] = useState(user.avatar);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    // Filter out the fields that are empty
+    const filteredData = Object.fromEntries(
+      Object.entries(data).filter(([key, value]) => value !== "")
+    );
+    try {
+      dispatch(updateUserStart());
+
+      const res = await axiosRequest.put(
+        `/api/user/update/${user._id}`,
+        filteredData
+      );
+      console.log("🚀 ~ file: Profile.jsx:53 ~ onSubmit ~ res:", res.data);
+      dispatch(updateUserSuccess(res.data));
+      navigate("/");
+    } catch (error) {
+      console.log("🚀 ~ file: Profile.jsx:55 ~ onSubmit ~ error:", error);
+      dispatch(updateUserFail(error.message));
+    }
   };
 
   const handleFileUpload = (file) => {
@@ -52,6 +78,7 @@ export default function Profile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setValue("avatar", downloadURL);
+          setImageUrl(downloadURL);
         });
       }
     );
@@ -63,10 +90,6 @@ export default function Profile() {
   }, [file]);
 
   const fileRef = useRef(null);
-  useEffect(() => {
-    setValue("username", user.username);
-    setValue("email", user.email);
-  }, [setValue, user.email, user.username]);
 
   //   allow read;
   // allow write : if
@@ -89,7 +112,7 @@ export default function Profile() {
         />
         <img
           onClick={() => fileRef.current.click()}
-          src={user.avatar}
+          src={imageUrl}
           alt={`profile-img-${user.username}`}
           className="rounded-full w-24 h-24 object-cover cursor-pointer self-center"
         />
@@ -105,37 +128,58 @@ export default function Profile() {
           ) : (
             <span></span>
           )}
-        </p>
-        <input
-          type="text"
-          placeholder="Username"
-          className="rounded-xl border p-3"
-          id="username"
-          name="username"
-          {...register("username", {
-            required: true,
-          })}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          className="rounded-xl border p-3"
-          id="email"
-          name="email"
-          {...register("email", {
-            required: true,
-          })}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="rounded-xl border p-3"
-          id="password"
-          name="password"
-          {...register("password", {
-            required: true,
-          })}
-        />
+        </p>{" "}
+        <div className="mt-2 flex flex-col gap-y-2 ">
+          <label
+            htmlFor="password"
+            className="capitalize ml-2 text-md font-semibold"
+          >
+            username
+          </label>
+
+          <input
+            defaultValue={user.username}
+            type="text"
+            placeholder="Username"
+            className="rounded-xl border p-3"
+            id="username"
+            name="username"
+            {...register("username", {})}
+          />
+        </div>
+        <div className="mt-2 flex flex-col gap-y-2 ">
+          <label
+            htmlFor="password"
+            className="capitalize ml-2 text-md font-semibold"
+          >
+            email
+          </label>
+          <input
+            defaultValue={user.email}
+            type="email"
+            placeholder="Email"
+            className="rounded-xl border p-3"
+            id="email"
+            name="email"
+            {...register("email", {})}
+          />
+        </div>
+        <div className="mt-2 flex flex-col gap-y-2 ">
+          <label
+            htmlFor="password"
+            className="capitalize ml-2 text-md font-semibold"
+          >
+            new password
+          </label>
+          <input
+            type="password"
+            placeholder="new password"
+            className="rounded-xl border p-3"
+            id="password"
+            name="password"
+            {...register("password", {})}
+          />
+        </div>
         <button
           disabled={!isDirty}
           className="bg-slate-700 text-white font-bold uppercase rounded-lg p-3  hover:opacity-70 disabled:opacity-50
