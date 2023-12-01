@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import { useUserSelector } from "./redux/user/userSlice";
 import NotFound from "./pages/NotFound";
+import CreateListing from "./pages/CreateListing";
 
 export default function App() {
   const { currentUser: isAuthenticated } = useUserSelector();
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/create-listing" element={<CreateListing />} />
         </Route>
         <Route path="*" element={<Navigate to="/not-found" />} />
         <Route path="/not-found" element={<NotFound />}></Route>
