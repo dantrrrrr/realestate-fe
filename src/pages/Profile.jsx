@@ -7,7 +7,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import {
@@ -19,7 +19,6 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   signoutUserStart,
-  signInSuccess,
   signoutUserFail,
   signoutUserSuccess,
 } from "../redux/user/userSlice";
@@ -223,6 +222,9 @@ export default function Profile() {
         >
           {loading ? "Loading" : "Update"}
         </button>
+        <Link className="bg-green-700 text-white text-center p-3 text-md font-bold uppercase rounded-lg hover:opacity-80" to="/create-listing">
+          Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span className="text-red-700 cursor-pointer" onClick={handleDelete}>
