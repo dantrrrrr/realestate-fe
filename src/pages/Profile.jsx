@@ -1,22 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  updateUserFail,
-  useUserSelector,
-  updateUserStart,
-  updateUserSuccess,
-} from "../redux/user/userSlice";
 import { useForm } from "react-hook-form";
-
 import {
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { app } from "../firebase/firebase";
 import { useDispatch } from "react-redux";
-import axiosRequest from "../config/axiosRequest";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import {
+  updateUserFail,
+  useUserSelector,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
+import { app } from "../firebase/firebase";
+import axiosRequest from "../config/axiosRequest";
 
 export default function Profile() {
   const {
@@ -27,9 +28,8 @@ export default function Profile() {
     formState: { errors, isDirty },
   } = useForm();
 
-  const { currentUser: user } = useUserSelector();
-  console.log("🚀 ~ file: Profile.jsx:31 ~ Profile ~ user:", user);
-
+  const { currentUser: user, loading } = useUserSelector();
+  console.log(loading);
   const [file, setFile] = useState(undefined);
   const [filePercent, setFilePercent] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
@@ -50,12 +50,14 @@ export default function Profile() {
         `/api/user/update/${user._id}`,
         filteredData
       );
-      console.log("🚀 ~ file: Profile.jsx:53 ~ onSubmit ~ res:", res.data);
+
       dispatch(updateUserSuccess(res.data));
+      toast.success("Profile updated successfully");
       navigate("/");
     } catch (error) {
       console.log("🚀 ~ file: Profile.jsx:55 ~ onSubmit ~ error:", error);
-      dispatch(updateUserFail(error.message));
+      toast.error(error.response.data.message);
+      dispatch(updateUserFail(error.response.data.message));
     }
   };
 
@@ -181,12 +183,12 @@ export default function Profile() {
           />
         </div>
         <button
-          disabled={!isDirty}
+          disabled={!isDirty || loading}
           className="bg-slate-700 text-white font-bold uppercase rounded-lg p-3  hover:opacity-70 disabled:opacity-50
           disabled:cursor-not-allowed
           "
         >
-          Update
+          {loading ? "Loading" : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
