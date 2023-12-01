@@ -18,7 +18,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Header />
-      <Toaster position="top-right" />
+      <Toaster position="center-top" />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
