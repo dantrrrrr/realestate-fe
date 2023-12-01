@@ -1,10 +1,11 @@
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
-import { app } from "../firebase";
-import axios from "axios";
+import { app } from "../firebase/firebase";
+
 import { useDispatch } from "react-redux";
 import { signInSuccess, useUserSelector } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import axiosRequest from "../config/axiosRequest";
 
 export default function OAuth() {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ export default function OAuth() {
         avatar: result.user.photoURL,
       };
 
-      const response = await axios.post("/api/auth/google", data);
+      const response = await axiosRequest.post("/api/auth/google", data);
 
       dispatch(signInSuccess(response.data));
       toast.success("Login with Google successfully");
