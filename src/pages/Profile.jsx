@@ -18,6 +18,10 @@ import {
   deleteUserFail,
   deleteUserStart,
   deleteUserSuccess,
+  signoutUserStart,
+  signInSuccess,
+  signoutUserFail,
+  signoutUserSuccess,
 } from "../redux/user/userSlice";
 import { app } from "../firebase/firebase";
 import axiosRequest from "../config/axiosRequest";
@@ -109,6 +113,17 @@ export default function Profile() {
       toast.error(error.response.data);
       dispatch(deleteUserFail(error.response.data));
       // console.log(error);
+    }
+  };
+  const handleSignout = async () => {
+    try {
+      dispatch(signoutUserStart());
+      const res = await axiosRequest.get("/api/auth/signout");
+      console.log("🚀 ~ file: Profile.jsx:117 ~ handleSignout ~ res:", res);
+      dispatch(signoutUserSuccess(res.data));
+    } catch (error) {
+      dispatch(signoutUserFail(error.response.data));
+      console.log("🚀 ~ file: Profile.jsx:117 ~ handleSignout ~ error:", error);
     }
   };
   //   allow read;
@@ -213,7 +228,9 @@ export default function Profile() {
         <span className="text-red-700 cursor-pointer" onClick={handleDelete}>
           Delete Account
         </span>
-        <span className="text-red-700 cursor-pointer">Sign out</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleSignout}>
+          Sign out
+        </span>
       </div>
     </div>
   );
