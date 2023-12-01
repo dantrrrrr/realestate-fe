@@ -15,6 +15,9 @@ import {
   useUserSelector,
   updateUserStart,
   updateUserSuccess,
+  deleteUserFail,
+  deleteUserStart,
+  deleteUserSuccess,
 } from "../redux/user/userSlice";
 import { app } from "../firebase/firebase";
 import axiosRequest from "../config/axiosRequest";
@@ -29,7 +32,7 @@ export default function Profile() {
   } = useForm();
 
   const { currentUser: user, loading } = useUserSelector();
-  console.log(loading);
+
   const [file, setFile] = useState(undefined);
   const [filePercent, setFilePercent] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
@@ -38,6 +41,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // FUNCTION
   const onSubmit = async (data) => {
     // Filter out the fields that are empty
     const filteredData = Object.fromEntries(
@@ -92,7 +96,21 @@ export default function Profile() {
   }, [file]);
 
   const fileRef = useRef(null);
+  const handleDelete = async () => {
+    console.log("delete start");
+    try {
+      dispatch(deleteUserStart());
 
+      const res = await axiosRequest.delete(`/api/user/delete/${user._id}`);
+      dispatch(deleteUserSuccess(res.data));
+      // console.log(res.data);
+      toast.success(res.data);
+    } catch (error) {
+      toast.error(error.response.data);
+      dispatch(deleteUserFail(error.response.data));
+      // console.log(error);
+    }
+  };
   //   allow read;
   // allow write : if
   // request.resource < 2*1024*1024 && request.resource.contentType.matches("image/*")
@@ -192,7 +210,9 @@ export default function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleDelete}>
+          Delete Account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
     </div>
