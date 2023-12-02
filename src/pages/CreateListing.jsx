@@ -5,15 +5,30 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import React, { useState } from "react";
+import { TiDelete } from "react-icons/ti";
 import { app } from "../firebase/firebase";
 
 export default function CreateListing() {
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({ imageUrls: [] });
-  const [imageUploadFileError, setImageUploadFileError] = useState(false);
+  console.log(
+    "🚀 ~ file: CreateListing.jsx:14 ~ CreateListing ~ formData:",
+    formData
+  );
 
+  const [imageUploadFileError, setImageUploadFileError] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const handleRemoveImage = (index) => {
+    console.log(index);
+    setFormData({
+      ...formData,
+      imageUrls: formData.imageUrls.filter((_, idx) => idx !== index),
+    });
+  };
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+      setUploading(true);
+      setImageUploadFileError(false);
       const promises = [];
       for (let i = 0; i < files.length; i++) {
         promises.push(storeImage(files[i]));
@@ -24,14 +39,19 @@ export default function CreateListing() {
             ...formData,
             imageUrls: formData.imageUrls.concat(urls),
           });
+          setImageUploadFileError(false);
+          setUploading(false);
         })
         .catch((error) => {
           setImageUploadFileError("image upload failed");
+          setUploading(false);
         });
     } else {
       setImageUploadFileError("you can only upload  6 images");
+      setUploading(false);
     }
   };
+
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -61,6 +81,7 @@ export default function CreateListing() {
       );
     });
   };
+
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
@@ -184,11 +205,12 @@ export default function CreateListing() {
               multiple
             />
             <button
+              disabled={uploading}
               type="button"
               onClick={handleImageSubmit}
               className="p-3 text-green-700 border border-green-700 rounded hover:shadow-lg disabled:opacity-70 uppercase"
             >
-              Upload
+              {uploading ? "Uploading" : " Upload"}
             </button>
           </div>
 
@@ -198,6 +220,32 @@ export default function CreateListing() {
           <p className="text-red-600">
             {imageUploadFileError && imageUploadFileError}
           </p>
+          <div className="flex flex-wrap">
+            {formData.imageUrls.length > 0 &&
+              formData.imageUrls.map((url, index) => (
+                <div
+                  key={url}
+                  className="flex justify-between relative p-3  items-center"
+                >
+                  <img
+                    src={url}
+                    className="rounded-lg object-cover w-20 h-20"
+                    alt={`listing-${index}`}
+                  />
+                  <button
+                    type="button"
+                    className=" absolute top-0 right-0 "
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    <TiDelete
+                      size="25"
+                      color="red"
+                      className=" bg-white w-full  rounded-full hover:scale-125  transition-all "
+                    />
+                  </button>
+                </div>
+              ))}
+          </div>
         </div>
       </form>
     </main>
