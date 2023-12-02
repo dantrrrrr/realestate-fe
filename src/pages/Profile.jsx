@@ -142,6 +142,18 @@ export default function Profile() {
       toast.error("Error while showing listings", error);
     }
   };
+
+  const handleListingDelete = async (listingId) => {
+    try {
+      const res = await axiosRequest.delete(`/api/listing/delete/${listingId}`);
+      res.data && toast.success(res.data);
+      setUserListings((prev) =>
+        prev.filter((listing) => listing._id !== listingId)
+      );
+    } catch (error) {
+      toast.error(error);
+    }
+  };
   return (
     <div className="p-3 max-w-lg mx-auto mb-10">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -253,7 +265,9 @@ export default function Profile() {
       <button onClick={handleShowListings} className="text-green-700 w-full ">
         Show listings
       </button>
-      {userListings && <h1 className="font-bold text-2xl text-center my-4">My Listing</h1>}
+      {userListings && (
+        <h1 className="font-bold text-2xl text-center my-4">My Listing</h1>
+      )}
       <div className="flex flex-wrap gap-2 justify-between mt-5">
         {userListings.length > 0 &&
           userListings.map((listing, index) => (
@@ -275,7 +289,10 @@ export default function Profile() {
                 </p>
               </Link>
               <div className="flex items-center mt-2 gap-2 ml-auto">
-                <button type="button">
+                <button
+                  type="button"
+                  onClick={() => handleListingDelete(listing._id)}
+                >
                   <MdDeleteForever
                     size={24}
                     className="text-red-800 hover:text-red-600"
