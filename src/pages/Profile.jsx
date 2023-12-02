@@ -24,6 +24,8 @@ import {
 } from "../redux/user/userSlice";
 import { app } from "../firebase/firebase";
 import axiosRequest from "../config/axiosRequest";
+import { MdDeleteForever } from "react-icons/md";
+import { MdModeEdit } from "react-icons/md";
 
 export default function Profile() {
   const {
@@ -40,6 +42,8 @@ export default function Profile() {
   const [filePercent, setFilePercent] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [imageUrl, setImageUrl] = useState(user.avatar);
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -128,9 +132,18 @@ export default function Profile() {
   //   allow read;
   // allow write : if
   // request.resource < 2*1024*1024 && request.resource.contentType.matches("image/*")
-
+  const handleShowListings = async () => {
+    try {
+      const res = await axiosRequest.get(`/api/user/listing/${user._id}`);
+      const data = res.data;
+      setUserListings(data);
+    } catch (error) {
+      setShowListingsError(true);
+      toast.error("Error while showing listings", error);
+    }
+  };
   return (
-    <div className="p-3 max-w-lg mx-auto">
+    <div className="p-3 max-w-lg mx-auto mb-10">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
       <form className="flex flex-col gap-y-4" onSubmit={handleSubmit(onSubmit)}>
         <input
@@ -222,7 +235,10 @@ export default function Profile() {
         >
           {loading ? "Loading" : "Update"}
         </button>
-        <Link className="bg-green-700 text-white text-center p-3 text-md font-bold uppercase rounded-lg hover:opacity-80" to="/create-listing">
+        <Link
+          className="bg-green-700 text-white text-center p-3 text-md font-bold uppercase rounded-lg hover:opacity-80"
+          to="/create-listing"
+        >
           Create Listing
         </Link>
       </form>
@@ -233,6 +249,47 @@ export default function Profile() {
         <span className="text-red-700 cursor-pointer" onClick={handleSignout}>
           Sign out
         </span>
+      </div>
+      <button onClick={handleShowListings} className="text-green-700 w-full ">
+        Show listings
+      </button>
+      {userListings && <h1 className="font-bold text-2xl text-center my-4">My Listing</h1>}
+      <div className="flex flex-wrap gap-2 justify-between mt-5">
+        {userListings.length > 0 &&
+          userListings.map((listing, index) => (
+            <div
+              key={index}
+              className="flex flex-col border w-[45%] items-center justify-center p-3 rounded-lg shadow-lg"
+            >
+              <Link to={`/listing/${listing._id}`}>
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="listing cover"
+                  className="w-[100%] rounded-lg object-contain"
+                />
+              </Link>
+              <Link to={`/listing/${listing._id}`} className="mt-2">
+                <p className="text-slate-700 font-semibold truncate">
+                  {" "}
+                  {listing.name}
+                </p>
+              </Link>
+              <div className="flex items-center mt-2 gap-2 ml-auto">
+                <button type="button">
+                  <MdDeleteForever
+                    size={24}
+                    className="text-red-800 hover:text-red-600"
+                  />
+                </button>
+                <button type="button">
+                  <MdModeEdit
+                    size={24}
+                    className="text-blue-800 hover:text-blue-600"
+                  />
+                </button>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );
