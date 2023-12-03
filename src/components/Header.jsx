@@ -21,10 +21,10 @@ export default function Header() {
 
     const searchTermFromUrl = urlParams.get("searchTerm");
 
-    if (searchTermFromUrl) {
+    if (searchTermFromUrl !== null && searchTermFromUrl !== undefined) {
       setSearchTerm(searchTermFromUrl);
     }
-  }, []);
+  }, [window.location.search]);
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center mx-auto p-4 max-w-6xl">
