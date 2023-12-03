@@ -8,6 +8,7 @@ export default function Search() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
+  const [showMore, setShowMore] = useState(false);
 
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
@@ -50,14 +51,15 @@ export default function Search() {
     const fetchListing = async () => {
       try {
         setLoading(true);
+        setShowMore(false);
         const searchQuery = urlParams.toString();
         const res = await axiosRequest.get(`/api/listing/get?${searchQuery}`);
         setListings(res.data);
+        res.data.length > 8 ? setShowMore(true) : setShowMore(false);
       } catch (error) {
         console.log("🚀 ~ file: Search.jsx:54 ~ fetchListing ~ error:", error);
       } finally {
         setLoading(false);
-        console.log(listings);
       }
     };
     fetchListing();
@@ -80,30 +82,69 @@ export default function Search() {
     ) {
       setSidebarData({
         ...sidebarData,
-        [e.target.id]:
-          e.target.checked || e.target.checked === "true" ? true : false,
+        [e.target.id]: e.target.checked || e.target.checked,
       });
     }
     if (e.target.id === "sort_order") {
-      const sort = e.target.value.split("_")[0] || "createdAt";
-      const order = e.target.value.split("_")[1] || "desc";
-      setSidebarData({ ...sidebarData, sort, order });
+      const [sort, order] = e.target.value.split("_");
+      setSidebarData({
+        ...sidebarData,
+        sort: sort || "createdAt",
+        order: order || "desc",
+      });
     }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams();
-    urlParams.set("searchTerm", sidebarData.searchTerm);
-    urlParams.set("type", sidebarData.type);
-    urlParams.set("offer", sidebarData.offer);
-    urlParams.set("furnished", sidebarData.furnished);
-    urlParams.set("parking", sidebarData.parking);
-    urlParams.set("sort", sidebarData.sort);
-    urlParams.set("order", sidebarData.order);
+    // Only include parameters in the URL if they are different from the default values
+    if (sidebarData.searchTerm !== "") {
+      urlParams.set("searchTerm", sidebarData.searchTerm);
+    }
+    if (sidebarData.type !== "all") {
+      urlParams.set("type", sidebarData.type);
+    }
+    if (sidebarData.offer) {
+      urlParams.set("offer", sidebarData.offer);
+    }
+    if (sidebarData.furnished) {
+      urlParams.set("furnished", sidebarData.furnished);
+    }
+    if (sidebarData.parking) {
+      urlParams.set("parking", sidebarData.parking);
+    }
+    if (sidebarData.sort !== "createdAt") {
+      urlParams.set("sort", sidebarData.sort);
+    }
+    if (sidebarData.order !== "desc") {
+      urlParams.set("order", sidebarData.order);
+    }
 
     const searchQuery = urlParams.toString();
 
     navigate(`/search?${searchQuery}`);
+  };
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams();
+
+    urlParams.set("startIndex", startIndex);
+
+    const searchQuery = urlParams.toString();
+
+    try {
+      const res = axiosRequest.get(`/api/listing/get?${searchQuery}`);
+      const data = (await res).data;
+      setListings([...listings, ...data]);
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: Search.jsx:140 ~ onShowMoreClick ~ error:",
+        error
+      );
+    } finally {
+      console.log(listings.length);
+    }
   };
   return (
     <div className="flex md:flex-row flex-col">
@@ -247,6 +288,14 @@ export default function Search() {
               ))}
           </div>
         </div>
+        {showMore && (
+          <button
+            onClick={onShowMoreClick}
+            className="text-green-700 hover:underline p-7 text-center w-full"
+          >
+            Show more
+          </button>
+        )}
         <SearchListings />
       </div>
     </div>
