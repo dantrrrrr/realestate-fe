@@ -6,7 +6,6 @@ export default function ListingItem({ listing }) {
       <Link to={`/listing/${listing._id}`}>
         <img src={listing.imageUrls[0]} alt="" />
       </Link>
-      ;
     </div>
   );
 }
