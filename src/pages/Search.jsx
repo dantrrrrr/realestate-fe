@@ -136,7 +136,10 @@ export default function Search() {
     try {
       const res = axiosRequest.get(`/api/listing/get?${searchQuery}`);
       const data = (await res).data;
-      setListings([...listings, ...data]);
+
+      data.length > 8
+        ? setListings([...listings, ...data])
+        : setShowMore(false);
     } catch (error) {
       console.log(
         "🚀 ~ file: Search.jsx:140 ~ onShowMoreClick ~ error:",
