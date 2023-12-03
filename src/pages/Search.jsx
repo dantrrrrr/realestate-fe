@@ -225,7 +225,7 @@ export default function Search() {
         </form>
       </div>
       <div className="flex-1">
-        <h1 className="text-3xl font-semibold border-b p-3 text-slate-600 mt-5">
+        <h1 className="text-3xl font-semibold border-b p-3 text-center text-slate-600 mt-5">
           Listing result
         </h1>
         <div className="p-7 flex flex-col  gap-4">
@@ -239,11 +239,13 @@ export default function Search() {
               Loading...
             </h1>
           )}
-          {!loading &&
-            listings &&
-            listings.map((listing, index) => (
-              <ListingItem key={index} listing={listing} />
-            ))}
+          <div className="flex flex-wrap gap-4">
+            {!loading &&
+              listings &&
+              listings.map((listing, index) => (
+                <ListingItem key={index} listing={listing} />
+              ))}
+          </div>
         </div>
         <SearchListings />
       </div>
