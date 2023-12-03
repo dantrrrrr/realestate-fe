@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosRequest from "../config/axiosRequest";
+import SearchListings from "../components/SearchListings";
+import ListingItem from "../components/ListingItem";
 
 export default function Search() {
   const navigate = useNavigate();
@@ -51,14 +53,11 @@ export default function Search() {
         const searchQuery = urlParams.toString();
         const res = await axiosRequest.get(`/api/listing/get?${searchQuery}`);
         setListings(res.data);
-        console.log(
-          "🚀 ~ file: Search.jsx:54 ~ fetchListing ~ res.data:",
-          res.data
-        );
       } catch (error) {
         console.log("🚀 ~ file: Search.jsx:54 ~ fetchListing ~ error:", error);
       } finally {
         setLoading(false);
+        console.log(listings);
       }
     };
     fetchListing();
@@ -103,10 +102,7 @@ export default function Search() {
     urlParams.set("order", sidebarData.order);
 
     const searchQuery = urlParams.toString();
-    console.log(
-      "🚀 ~ file: Search.jsx:55 ~ handleSubmit ~ searchQuery:",
-      searchQuery
-    );
+
     navigate(`/search?${searchQuery}`);
   };
   return (
@@ -228,10 +224,28 @@ export default function Search() {
           </button>
         </form>
       </div>
-      <div className="">
+      <div className="flex-1">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-600 mt-5">
           Listing result
         </h1>
+        <div className="p-7 flex flex-col  gap-4">
+          {!loading && listings.length === 0 && (
+            <h1 className="text-xl text-slate-700 text-center py-2">
+              No listing found
+            </h1>
+          )}
+          {loading && (
+            <h1 className="text-xl text-slate-700 text-center w-full">
+              Loading...
+            </h1>
+          )}
+          {!loading &&
+            listings &&
+            listings.map((listing, index) => (
+              <ListingItem key={index} listing={listing} />
+            ))}
+        </div>
+        <SearchListings />
       </div>
     </div>
   );
