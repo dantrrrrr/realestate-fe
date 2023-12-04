@@ -1,5 +1,4 @@
-
-done 90% maybe 
+done 90% maybe
 
 move the listing own to new route
 make loading better
@@ -10,3 +9,5 @@ add footer
 fix image some not exist
 
 add more data for wide range search
+
+fix this google login not working when deployed
