@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import axiosRequest from "../config/axiosRequest";
@@ -8,7 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
-export default function Home() {
+const Home = React.memo(() => {
   SwiperCore.use([Navigation]);
 
   const [offerListings, setOfferListings] = useState([]);
@@ -132,7 +132,7 @@ export default function Home() {
               </h2>
               <Link
                 className="text-sm text-blue-800 hover:underline hover:ml-3 transition-all"
-                to={"/search?offer=true"}
+                to={"/search?type=sale"}
               >
                 Show more sales
               </Link>
@@ -147,4 +147,5 @@ export default function Home() {
       </div>
     </div>
   );
-}
+});
+export default Home;

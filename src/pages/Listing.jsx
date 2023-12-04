@@ -1,10 +1,15 @@
+// import "swiper/css/bundle";
+import "swiper/css";
+import "swiper/css/navigation";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+
 import React, { useEffect, useState } from "react";
 import axiosRequest from "../config/axiosRequest.js";
 import { useParams } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
+
 import SwiperCore from "swiper";
-import { Navigation } from "swiper/modules";
-import "swiper/css/bundle";
 import { useUserSelector } from "../redux/user/userSlice.js";
 import {
   FaBath,
@@ -43,7 +48,7 @@ export default function Listing() {
     };
     fetchListing();
   }, [id]);
-  // console.log(loading);
+
   return (
     <main>
       {loading && <p className="text-center my-7  text-2xl">loading....</p>}
@@ -51,18 +56,29 @@ export default function Listing() {
 
       {listingData && !loading && !error && (
         <>
-          <Swiper navigation>
-            {listingData.imageUrls.map((url) => (
-              <SwiperSlide key={url}>
-                <div
-                  className="h-[550px]"
-                  style={{
-                    background: `url(${url}) center no-repeat`,
-                    backgroundSize: "cover",
-                  }}
-                ></div>
-              </SwiperSlide>
-            ))}
+          <Swiper
+            navigation={true}
+            // modules={[Navigation]}
+            onSlideChange={() => console.log("slide change")}
+          >
+            {listingData.imageUrls.map((url, index) => {
+              return (
+                <SwiperSlide key={url}>
+                  {/* <div
+                    className="h-[550px]"
+                    style={{
+                      background: `url(${url}) center no-repeat`,
+                      backgroundSize: "cover",
+                    }}
+                  ></div> */}
+                  <img
+                    src={url}
+                    className="h-[450px] w-full object-cover"
+                    alt=""
+                  />
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
           <div className="fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer">
             <FaShare
