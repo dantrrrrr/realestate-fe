@@ -16,6 +16,7 @@ import UpdateListing from "./pages/UpdateListing";
 import Listing from "./pages/Listing";
 import Search from "./pages/Search";
 import Footer from "./components/Footer";
+import MyListings from "./pages/MyListings";
 
 export default function App() {
   const { currentUser: isAuthenticated } = useUserSelector();
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="/search" element={<Search />} />
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/my-listing" element={<MyListings />} />
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/update-listing/:id" element={<UpdateListing />} />
         </Route>

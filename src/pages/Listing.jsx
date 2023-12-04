@@ -50,7 +50,7 @@ export default function Listing() {
   }, [id]);
 
   return (
-    <main>
+    <main className="min-h-screen">
       {loading && <p className="text-center my-7  text-2xl">loading....</p>}
       {error && <p className="text-center my-7  text-2xl">error</p>}
 

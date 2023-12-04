@@ -29,7 +29,7 @@ export default function Header() {
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center mx-auto p-4 max-w-6xl">
         <Link to="/">
-          <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
+          <h1 className="font-bold text-sm sm:text-2xl flex flex-wrap">
             <span className="text-slate-500">DanT</span>
             <span className="text-slate-700">Estate</span>
           </h1>
@@ -64,13 +64,20 @@ export default function Header() {
             </li>
           </Link>
           {currentUser ? (
-            <Link to="/profile">
-              <img
-                src={currentUser.avatar}
-                alt=""
-                className="w-7 h-7 rounded-full object-cover"
-              />
-            </Link>
+            <>
+              <Link to="/my-listing">
+                <li className="hidden sm:inline text-slate-700  hover:underline cursor-pointer">
+                  My Listing
+                </li>
+              </Link>
+              <Link to="/profile">
+                <img
+                  src={currentUser.avatar}
+                  alt=""
+                  className="w-7 h-7 rounded-full object-cover"
+                />
+              </Link>
+            </>
           ) : (
             <Link to="/sign-in">
               <li className="hidden sm:inline text-slate-700  hover:underline cursor-pointer">

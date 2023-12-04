@@ -240,7 +240,7 @@ export default function Profile() {
         </span>
       </div>
 
-      <Listings />
+      {/* <Listings /> */}
     </div>
   );
 }
