@@ -84,7 +84,7 @@ const Home = React.memo(() => {
       <div className="max-w-6xl mx-auto flex flex-col gap-8 my-10 ">
         {offerListings && offerListings.length > 0 && (
           <>
-            <div className="">
+            <div className="transition-all">
               <h2 className="text-2xl font-semibold text-slate-600">
                 Recent offers
               </h2>
@@ -105,7 +105,7 @@ const Home = React.memo(() => {
 
         {saleListings && saleListings.length > 0 && (
           <>
-            <div className="">
+            <div className="transition-all">
               <h2 className="text-2xl font-semibold text-slate-600">
                 Recent sales
               </h2>
@@ -126,7 +126,7 @@ const Home = React.memo(() => {
 
         {rentListings && rentListings.length > 0 && (
           <>
-            <div className="">
+            <div className="transition-all">
               <h2 className="text-2xl font-semibold text-slate-600">
                 Recent sales
               </h2>
